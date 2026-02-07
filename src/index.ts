@@ -7,6 +7,7 @@ export interface Env {
   CLOUDFLARE_ACCOUNT_ID: string;
   CLOUDFLARE_NAMESPACE_ID: string;
   CLOUDFLARE_API_TOKEN: string;
+  AUTH_SECRET: string;
 }
 
 export default {
@@ -17,13 +18,36 @@ export default {
       CLOUDFLARE_NAMESPACE_ID: env.CLOUDFLARE_NAMESPACE_ID,
       CLOUDFLARE_API_TOKEN: env.CLOUDFLARE_API_TOKEN,
     });
+    const url = new URL(request.url);
     const instance = await WebAssembly.instantiate(mod, go.importObject);
     go.run(instance);
     if (request.method == "POST") {
+      const authHeader = request.headers.get("Authorization");
+      if (!authHeader || authHeader !== env.AUTH_SECRET) {
+        return new Response("Unauthorized", {
+          status: 401,
+        });
+      }
+      const urlToShorten = request.headers.get("Url");
+      if (!urlToShorten) {
+        return new Response("Incomplete Request, Include the `Url` Header", {
+          status: 400,
+        });
+      }
       // @ts-ignore
-      const checkSum = globalThis.createShortUrl("https://github.com/prdai");
-      console.log(checkSum);
+      const checkSum = await globalThis.createShortUrl(request.headers);
+      const responseBody = JSON.stringify({
+        redirectUrl: `${url.origin}/${checkSum}`,
+      });
+      return new Response(responseBody, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     }
-    return new Response(`Success`);
+    // @ts-ignore
+    const redirectUrl = await globalThis.getRedirectUrl(url.pathname.slice(1));
+    return Response.redirect(redirectUrl, 301);
   },
 };
