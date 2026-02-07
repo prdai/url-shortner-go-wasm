@@ -9,4 +9,10 @@
       "invocation_logs": true,
     },
   },
+  "routes": [
+    {
+      "pattern": "s.prdai.dev",
+      "custom_domain": true,
+    },
+  ],
 }

@@ -23,19 +23,21 @@ export default {
     go.run(instance);
     if (request.method == "POST") {
       const authHeader = request.headers.get("Authorization");
+      console.log(authHeader);
       if (!authHeader || authHeader !== env.AUTH_SECRET) {
         return new Response("Unauthorized", {
           status: 401,
         });
       }
-      const urlToShorten = request.headers.get("Url");
+      const reqBody = (await request.json()) as { Url?: string };
+      const urlToShorten = reqBody["Url"];
       if (!urlToShorten) {
         return new Response("Incomplete Request, Include the `Url` Header", {
           status: 400,
         });
       }
       // @ts-ignore
-      const checkSum = await globalThis.createShortUrl(request.headers);
+      const checkSum = await globalThis.createShortUrl(urlToShorten);
       const responseBody = JSON.stringify({
         redirectUrl: `${url.origin}/${checkSum}`,
       });
