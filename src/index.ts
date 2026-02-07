@@ -1,6 +1,7 @@
 // @ts-ignore
 import mod from "../wasm/main.wasm";
 import "../wasm_exec.js";
+import { Request } from "@cloudflare/workers-types";
 
 export interface Env {
   CLOUDFLARE_ACCOUNT_ID: string;
@@ -9,7 +10,7 @@ export interface Env {
 }
 
 export default {
-  async fetch(_: any, env: Env, __: any) {
+  async fetch(request: Request, env: Env, __: any): Promise<Response> {
     // @ts-ignore
     const go = new globalThis.Go({
       CLOUDFLARE_ACCOUNT_ID: env.CLOUDFLARE_ACCOUNT_ID,
@@ -17,7 +18,12 @@ export default {
       CLOUDFLARE_API_TOKEN: env.CLOUDFLARE_API_TOKEN,
     });
     const instance = await WebAssembly.instantiate(mod, go.importObject);
-    const retval = await go.run(instance);
-    return new Response(`Success: ${retval}`);
+    go.run(instance);
+    if (request.method == "POST") {
+      // @ts-ignore
+      const checkSum = globalThis.createShortUrl("https://github.com/prdai");
+      console.log(checkSum);
+    }
+    return new Response(`Success`);
   },
 };

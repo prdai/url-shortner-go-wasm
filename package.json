@@ -8,6 +8,7 @@
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260207.0",
     "@types/node": "latest"
   },
   "peerDependencies": {
