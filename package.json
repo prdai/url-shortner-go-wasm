@@ -1,0 +1,19 @@
+{
+  "name": "url-shortner-go-wasm",
+  "module": "src/index.ts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --env-file .env",
+    "cf-typegen": "wrangler types"
+  },
+  "devDependencies": {
+    "@types/node": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "wrangler": "^4.63.0"
+  }
+}

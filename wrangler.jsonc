@@ -1,0 +1,6 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "url-shortner-go-wasm",
+  "main": "./src/index.ts",
+  "compatibility_date": "2025-12-10",
+}

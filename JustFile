@@ -1,0 +1,12 @@
+build:
+        GOOS=js GOARCH=wasm go build -C ./src/ -o ../wasm/main.wasm
+
+run:
+        GOOS=js GOARCH=wasm go run ./src/ 
+
+test:
+        GOOS=js GOARCH=wasm go test ./src/ 
+
+dev:
+        just build
+        bun run dev
