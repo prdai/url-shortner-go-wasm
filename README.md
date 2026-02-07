@@ -40,7 +40,7 @@ returns a `301` redirect to the original url.
 | ------------------ | ---------------------------- |
 | go 1.25+           | core logic, compiled to wasm |
 | `syscall/js`       | go ↔ js bridge              |
-| `wasm_exec.js`     | go wasm runtime              |
+| `wasm_exec.js`     | go wasm runtime (from go team, customized to pass env vars)             |
 | cloudflare workers | runtime                      |
 | cloudflare kv      | key-value storage            |
 | crc32              | url → short id generation    |
