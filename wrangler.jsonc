@@ -3,4 +3,10 @@
   "name": "url-shortner-go-wasm",
   "main": "./src/index.ts",
   "compatibility_date": "2025-12-10",
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+    },
+  },
 }
