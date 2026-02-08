@@ -36,24 +36,32 @@ export default {
           status: 400,
         });
       }
-      // @ts-ignore
-      const checkSum = await globalThis.createShortUrl(urlToShorten);
-      const responseBody = JSON.stringify({
-        redirectUrl: `${url.origin}/${checkSum}`,
-      });
-      return new Response(responseBody, {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      try {
+        // @ts-ignore
+        const checkSum = await globalThis.createShortUrl(urlToShorten);
+        const responseBody = JSON.stringify({
+          redirectUrl: `${url.origin}/${checkSum}`,
+        });
+        return new Response(responseBody, {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        return new Response(error as string, { status: 500 });
+      }
     }
     if (url.pathname.split("/").length <= 1) {
-      // @ts-ignore
-      const redirectUrl = await globalThis.getRedirectUrl(
-        url.pathname.slice(1),
-      );
-      return Response.redirect(redirectUrl, 301);
+      try {
+        // @ts-ignore
+        const redirectUrl = await globalThis.getRedirectUrl(
+          url.pathname.slice(1),
+        );
+        return Response.redirect(redirectUrl, 301);
+      } catch (error) {
+        return new Response(error as string, { status: 500 });
+      }
     }
     return new Response("url-shortner-go-wasm", { status: 200 });
   },
