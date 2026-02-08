@@ -88,38 +88,25 @@ bun run deploy
 
 ## performance & monitoring
 
-production metrics from 2026-02-08 deployment window (Colombo time):
+production metrics from 2026-02-08 (successful requests only):
 
-### redirect lookup (get `/{slug}`)
+### redirect (get `/{code}` → 3xx)
 
-- **requests**: 57 total
-- **status distribution**: 200×3, 301×1, 500×53
-- **error rate**: 93.0% (5xx)
-- **latency**: p50 53ms / p95 273ms
-- **note**: includes browser and bot paths (`/favicon.ico`, `/robots.txt`, `/.env*`, `/.git/config`) hitting the same lookup handler, which currently results in 500 errors
+- **successful requests**: 6
+- **unique shortcodes**: 4
+- **status**: 301×6
+- **latency**: p50 275.5ms / p95 590.8ms / mean 333ms
+- **cpu time**: p50 93ms / p95 118ms
+- **time window**: 2026-02-08 10:06:43 UTC → 2026-02-08 10:16:33 UTC
 
-### redirect lookup - numeric shortcodes only (get `/{id:int}`)
+### create (post `/` → 2xx)
 
-- **requests**: 5 total (real shortlink hits)
-- **status distribution**: 200×2, 301×1, 500×2
-- **error rate**: 40.0% (5xx)
-- **latency**: p50 61ms / p95 305ms
-
-### create shortlink (post `/`)
-
-- **requests**: 24 total
-- **status distribution**: 200×1, 401×20, 500×3
-- **4xx rate**: 83.3% (mostly auth failures)
-- **5xx rate**: 12.5% (backend/config failures)
-- **latency**: p50 50ms / p95 112ms
-
-### create shortlink - authenticated requests only
-
-- **requests**: 4 total (auth passed)
-- **status distribution**: 200×1, 500×3
-- **error rate**: 75.0% (5xx)
-- **latency**: p50 103ms / p95 368ms
-- **note**: shows performance once auth succeeds, though write operations still often fail
+- **successful requests**: 4
+- **unique urls**: 1
+- **status**: 200×4
+- **latency**: p50 383.5ms / p95 614.3ms / mean 418ms
+- **cpu time**: p50 98.5ms / p95 125.8ms
+- **time window**: 2026-02-08 09:59:02 UTC → 2026-02-08 10:11:40 UTC
 
 ## license
 
