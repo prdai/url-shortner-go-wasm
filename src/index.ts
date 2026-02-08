@@ -60,6 +60,7 @@ export default {
         return new Response(error as string, { status: 500 });
       }
     }
+    console.log(url.pathname.split("/"));
     if (url.pathname.split("/").length <= 1) {
       try {
         // @ts-expect-error: go wasm realted
