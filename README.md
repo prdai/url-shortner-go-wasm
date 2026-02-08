@@ -86,6 +86,13 @@ compiles go to `wasm/main.wasm` and starts `wrangler dev`.
 bun run deploy
 ```
 
+## performance
+
+typical latency for successful requests:
+
+- **redirect**: ~275ms (p50), ~590ms (p95)
+- **create**: ~380ms (p50), ~615ms (p95)
+
 ## license
 
 mit
