@@ -29,6 +29,7 @@ export default {
         log.info(
           `Unavailable Auth Header / Auth Header not Matching: ${authHeader}`,
         );
+        console.log(authHeader);
         return new Response("Unauthorized", {
           status: 401,
         });
