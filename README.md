@@ -86,27 +86,12 @@ compiles go to `wasm/main.wasm` and starts `wrangler dev`.
 bun run deploy
 ```
 
-## performance & monitoring
+## performance
 
-production metrics from 2026-02-08 (successful requests only):
+typical latency for successful requests:
 
-### redirect (get `/{code}` → 3xx)
-
-- **successful requests**: 6
-- **unique shortcodes**: 4
-- **status**: 301×6
-- **latency**: p50 275.5ms / p95 590.8ms / mean 333ms
-- **cpu time**: p50 93ms / p95 118ms
-- **time window**: 2026-02-08 10:06:43 UTC → 2026-02-08 10:16:33 UTC
-
-### create (post `/` → 2xx)
-
-- **successful requests**: 4
-- **unique urls**: 1
-- **status**: 200×4
-- **latency**: p50 383.5ms / p95 614.3ms / mean 418ms
-- **cpu time**: p50 98.5ms / p95 125.8ms
-- **time window**: 2026-02-08 09:59:02 UTC → 2026-02-08 10:11:40 UTC
+- **redirect**: ~275ms (p50), ~590ms (p95)
+- **create**: ~380ms (p50), ~615ms (p95)
 
 ## license
 
