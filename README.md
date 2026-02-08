@@ -20,10 +20,10 @@ both return javascript promises wrapping async go routines. the go wasm runtime 
 ### post `/` — shorten a url
 
 ```bash
-curl -x post https://s.prdai.dev \
-  -h "content-type: application/json" \
-  -h "authorization: <auth_secret>" \
-  -d '{"url": "https://www.google.com/"}'
+curl -X POST https://s.prdai.dev \
+  -H "Content-Type: application/json" \
+  -H "Authorization: <auth_secret>" \
+  -d '{"Url": "https://www.google.com/"}'
 ```
 
 ```json
@@ -36,15 +36,15 @@ returns a `301` redirect to the original url.
 
 ## stack
 
-| component          | role                         |
-| ------------------ | ---------------------------- |
-| go 1.25+           | core logic, compiled to wasm |
-| `syscall/js`       | go ↔ js bridge              |
-| `wasm_exec.js`     | go wasm runtime (from go team, customized to pass env vars)             |
-| cloudflare workers | runtime                      |
-| cloudflare kv      | key-value storage            |
-| crc32              | url → short id generation    |
-| typescript         | worker entrypoint            |
+| component          | role                                                        |
+| ------------------ | ----------------------------------------------------------- |
+| go 1.25+           | core logic, compiled to wasm                                |
+| `syscall/js`       | go ↔ js bridge                                             |
+| `wasm_exec.js`     | go wasm runtime (from go team, customized to pass env vars) |
+| cloudflare workers | runtime                                                     |
+| cloudflare kv      | key-value storage                                           |
+| crc32              | url → short id generation                                   |
+| typescript         | worker entrypoint                                           |
 
 ## setup
 

@@ -2,6 +2,7 @@
 import mod from "../wasm/main.wasm";
 import "../wasm_exec.js";
 import { Request } from "@cloudflare/workers-types";
+import log from "loglevel";
 
 export interface Env {
   CLOUDFLARE_ACCOUNT_ID: string;
@@ -12,6 +13,7 @@ export interface Env {
 
 export default {
   async fetch(request: Request, env: Env, __: any): Promise<Response> {
+    log.info(`Request Recieved: ${request}`);
     // @ts-ignore
     const go = new globalThis.Go({
       CLOUDFLARE_ACCOUNT_ID: env.CLOUDFLARE_ACCOUNT_ID,
@@ -23,8 +25,10 @@ export default {
     go.run(instance);
     if (request.method == "POST") {
       const authHeader = request.headers.get("Authorization");
-      console.log(authHeader);
       if (!authHeader || authHeader !== env.AUTH_SECRET) {
+        log.info(
+          `Unavailable Auth Header / Auth Header not Matching: ${authHeader}`,
+        );
         return new Response("Unauthorized", {
           status: 401,
         });
@@ -36,9 +40,11 @@ export default {
           status: 400,
         });
       }
+      log.info(`Accessed Url to Shorten from Request Body: ${urlToShorten}`);
       try {
         // @ts-ignore
         const checkSum = await globalThis.createShortUrl(urlToShorten);
+        log.info(`Created Check Sum for Url: ${urlToShorten}=${checkSum}`);
         const responseBody = JSON.stringify({
           redirectUrl: `${url.origin}/${checkSum}`,
         });
@@ -49,6 +55,7 @@ export default {
           },
         });
       } catch (error) {
+        log.error(error);
         return new Response(error as string, { status: 500 });
       }
     }
@@ -58,8 +65,12 @@ export default {
         const redirectUrl = await globalThis.getRedirectUrl(
           url.pathname.slice(1),
         );
+        log.info(
+          `Access Redirect Url for Check Sum: ${url.pathname.slice(1)}={redirectUrl}`,
+        );
         return Response.redirect(redirectUrl, 301);
       } catch (error) {
+        log.error(error);
         return new Response(error as string, { status: 500 });
       }
     }

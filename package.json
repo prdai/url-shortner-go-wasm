@@ -16,6 +16,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "loglevel": "^1.9.2",
     "wrangler": "^4.63.0"
   }
 }
