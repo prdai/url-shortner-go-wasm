@@ -24,10 +24,10 @@ export default {
     const instance = await WebAssembly.instantiate(mod, go.importObject);
     go.run(instance);
     if (request.method === "POST") {
-      for (const [k, v] of request.headers.entries()) {
-        console.log(`header: ${k}(${v})`);
-      }
+      const headerEntries = [...request.headers.entries()];
+      console.log("All headers:", headerEntries);
       const authHeader = request.headers.get("authorization");
+      console.log("Authorization header raw:", authHeader);
       if (!authHeader || authHeader !== env.AUTH_SECRET) {
         log.info(
           `Unavailable Auth Header / Auth Header not Matching: ${authHeader}`,
