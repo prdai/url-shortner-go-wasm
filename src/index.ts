@@ -48,8 +48,13 @@ export default {
         },
       });
     }
-    // @ts-ignore
-    const redirectUrl = await globalThis.getRedirectUrl(url.pathname.slice(1));
-    return Response.redirect(redirectUrl, 301);
+    if (url.pathname.split("/").length <= 1) {
+      // @ts-ignore
+      const redirectUrl = await globalThis.getRedirectUrl(
+        url.pathname.slice(1),
+      );
+      return Response.redirect(redirectUrl, 301);
+    }
+    return new Response("url-shortner-go-wasm", { status: 200 });
   },
 };
