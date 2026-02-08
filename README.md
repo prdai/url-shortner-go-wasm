@@ -88,7 +88,7 @@ bun run deploy
 
 ## performance & monitoring
 
-production metrics from 2026-02-08 deployment window (colombo time):
+production metrics from 2026-02-08 deployment window (Colombo time):
 
 ### redirect lookup (get `/{slug}`)
 
