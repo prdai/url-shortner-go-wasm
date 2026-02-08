@@ -1,8 +1,8 @@
-// @ts-ignore
+import type { Request } from "@cloudflare/workers-types";
+import log from "loglevel";
+// @ts-expect-error: go wasm realted
 import mod from "../wasm/main.wasm";
 import "../wasm_exec.js";
-import { Request } from "@cloudflare/workers-types";
-import log from "loglevel";
 
 export interface Env {
   CLOUDFLARE_ACCOUNT_ID: string;
@@ -14,7 +14,7 @@ export interface Env {
 export default {
   async fetch(request: Request, env: Env, __: any): Promise<Response> {
     log.info(`Request Recieved: ${request}`);
-    // @ts-ignore
+    // @ts-expect-error: go wasm realted
     const go = new globalThis.Go({
       CLOUDFLARE_ACCOUNT_ID: env.CLOUDFLARE_ACCOUNT_ID,
       CLOUDFLARE_NAMESPACE_ID: env.CLOUDFLARE_NAMESPACE_ID,
@@ -23,7 +23,7 @@ export default {
     const url = new URL(request.url);
     const instance = await WebAssembly.instantiate(mod, go.importObject);
     go.run(instance);
-    if (request.method == "POST") {
+    if (request.method === "POST") {
       const authHeader = request.headers.get("Authorization");
       if (!authHeader || authHeader !== env.AUTH_SECRET) {
         log.info(
@@ -34,7 +34,7 @@ export default {
         });
       }
       const reqBody = (await request.json()) as { Url?: string };
-      const urlToShorten = reqBody["Url"];
+      const urlToShorten = reqBody.Url;
       if (!urlToShorten) {
         return new Response("Incomplete Request, Include the `Url` Header", {
           status: 400,
@@ -42,8 +42,8 @@ export default {
       }
       log.info(`Accessed Url to Shorten from Request Body: ${urlToShorten}`);
       try {
-        // @ts-ignore
-        const checkSum = await globalThis.createShortUrl(urlToShorten);
+        // @ts-expect-error: go wasm realted
+        const checkSum = await globalThis.createShortURL(urlToShorten);
         log.info(`Created Check Sum for Url: ${urlToShorten}=${checkSum}`);
         const responseBody = JSON.stringify({
           redirectUrl: `${url.origin}/${checkSum}`,
@@ -61,8 +61,8 @@ export default {
     }
     if (url.pathname.split("/").length <= 1) {
       try {
-        // @ts-ignore
-        const redirectUrl = await globalThis.getRedirectUrl(
+        // @ts-expect-error: go wasm realted
+        const redirectUrl = await globalThis.getRedirectURL(
           url.pathname.slice(1),
         );
         log.info(

@@ -1,10 +1,13 @@
+//go:build js && wasm
+// +build js,wasm
+
 package main
 
 import (
 	"context"
-	"fmt"
 	"hash/crc32"
 	"io"
+	"log/slog"
 	"os"
 	"strconv"
 	"syscall/js"
@@ -26,17 +29,17 @@ func createCheckSumForURL(url string) string {
 	return strconv.FormatUint(uint64(checksum), 10)
 }
 
-func createShortUrl(this js.Value, args []js.Value) any {
+func createShortURL(this js.Value, args []js.Value) any {
 	url := args[0].String()
 	client := getCloudflareClient()
 	checkSum := createCheckSumForURL(url)
 	promise := js.Global().Get("Promise")
-	handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	handler := js.FuncOf(func(this js.Value, args []js.Value) any {
 		resolve := args[0]
 		reject := args[1]
 
 		go func() {
-			response, err := client.KV.Namespaces.Bulk.Update(
+			_, err := client.KV.Namespaces.Bulk.Update(
 				context.TODO(),
 				os.Getenv("CLOUDFLARE_NAMESPACE_ID"),
 				kv.NamespaceBulkUpdateParams{
@@ -48,10 +51,9 @@ func createShortUrl(this js.Value, args []js.Value) any {
 				},
 			)
 			if err != nil {
-				fmt.Errorf(err.Error())
+				slog.Error(err.Error())
 				reject.Invoke(err.Error())
 			}
-			fmt.Printf("%+v", response.JSON)
 			resolve.Invoke(checkSum)
 		}()
 		return nil
@@ -59,11 +61,11 @@ func createShortUrl(this js.Value, args []js.Value) any {
 	return promise.New(handler)
 }
 
-func getRedirectUrl(this js.Value, args []js.Value) any {
+func getRedirectURL(this js.Value, args []js.Value) any {
 	checkSum := args[0].String()
 	client := getCloudflareClient()
 	promise := js.Global().Get("Promise")
-	handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	handler := js.FuncOf(func(this js.Value, args []js.Value) any {
 		resolve := args[0]
 		reject := args[1]
 		go func() {
@@ -76,10 +78,14 @@ func getRedirectUrl(this js.Value, args []js.Value) any {
 				},
 			)
 			if err != nil {
-				fmt.Errorf(err.Error())
+				slog.Error(err.Error())
 				reject.Invoke(err.Error())
 			}
 			bodyBytes, err := io.ReadAll(response.Body)
+			if err != nil {
+				slog.Error(err.Error())
+				reject.Invoke(err.Error())
+			}
 			resolve.Invoke(string(bodyBytes))
 		}()
 		return nil
@@ -88,7 +94,7 @@ func getRedirectUrl(this js.Value, args []js.Value) any {
 }
 
 func main() {
-	js.Global().Set("createShortUrl", js.FuncOf(createShortUrl))
-	js.Global().Set("getRedirectUrl", js.FuncOf(getRedirectUrl))
+	js.Global().Set("createShortURL", js.FuncOf(createShortURL))
+	js.Global().Set("getRedirectURL", js.FuncOf(getRedirectURL))
 	select {}
 }

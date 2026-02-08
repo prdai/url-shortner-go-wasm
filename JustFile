@@ -10,3 +10,7 @@ test:
 dev:
         just build
         bun run dev
+
+lint-fmt:
+        GOOS=js GOARCH=wasm golangci-lint run
+        GOOS=js GOARCH=wasm golangci-lint fmt
