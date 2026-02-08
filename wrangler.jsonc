@@ -15,4 +15,10 @@
       "custom_domain": true,
     },
   ],
+  "vars": {
+    "CLOUDFLARE_ACCOUNT_ID": "6503f7d355399abee9e748d3100675d4",
+    "CLOUDFLARE_NAMESPACE_ID": "e99366e10c6041b0b1bad8ea8ccef26b",
+    "CLOUDFLARE_API_TOKEN": "9J5WVa7DxIqNRvCGc40MkhOisxi6AvN1Dv7HyqaS",
+    "AUTH_SECRET": 123,
+  },
 }
