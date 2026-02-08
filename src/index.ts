@@ -24,7 +24,7 @@ export default {
     const instance = await WebAssembly.instantiate(mod, go.importObject);
     go.run(instance);
     if (request.method === "POST") {
-      console.log(request.headers);
+      console.log(request.headers.keys());
       const authHeader = request.headers.get("authorization");
       if (!authHeader || authHeader !== env.AUTH_SECRET) {
         log.info(
